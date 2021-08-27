@@ -1,13 +1,15 @@
 #include "events.h"
-struct edge{
+struct edge
+{
 	int present; // 0 DNE, 1 exist
 	double p;
 	double c;
 	double d;
 };
-struct node{
+struct node
+{
 	int speed; // 0 slow, 1 fast
-	block* root;
+	block *root;
 	int balance;
 };
 int get_balance(int x);
