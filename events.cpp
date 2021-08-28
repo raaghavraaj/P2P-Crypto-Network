@@ -3,7 +3,7 @@
 #include "utils.h"
 using namespace std;
 int mining_fee = 50;
-vector<int> txns;
+vector<txn> txns;
 block *create_block(block *par, int num)
 {
 	block *new_block = new block;
@@ -40,9 +40,5 @@ int create_txn(int x, int y, int num)
 	}
 	t.c = get_random_int(bal) + 1;
 	txns.push_back(t);
-	return txns.size()-1;
+	return txns.size() - 1;
 }
-/*event::bool operator<(const event &e1, const event &e2)
-{
-	return e1.idx < e2.idx;
-}*/

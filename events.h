@@ -20,7 +20,10 @@ struct event
 	int type;	// 0 txn, 1 block
 	int idx;
 	block *b;
-	//bool operator<(const event &e1, const event &e2);
+	bool operator<(const event &e2) const
+	{
+		return std::tie(idx) < std::tie(e2.idx);
+	}
 };
 block *create_block(block *par, int num);
 int create_txn(int x, int num);
