@@ -1,6 +1,5 @@
 # P2P-Crypto-Network
 This is the repository for the Simulation of P2P Cyptocurrency Network.
-
 The assignment is completed with utmost honest and following all the academic guidelines.
 
 # Team Members:
