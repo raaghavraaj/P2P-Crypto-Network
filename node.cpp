@@ -40,9 +40,9 @@ void create_connected_graph()
 				peers_edges[i][j].p = get_uniform_0to1()*490+10;
 				if(peers_array[i].speed == 1 && peers_array[j].speed == 1)
 				{
-					peers_edges[i][j].c = 102400;
+					peers_edges[i][j].c = 102.4;
 				}else{
-					peers_edges[i][j].c = 5120;
+					peers_edges[i][j].c = 5.12;
 				}
 				peers_edges[j][i] = peers_edges[i][j];
 			}
@@ -108,4 +108,23 @@ void add_txn(int txn_id, int x)
 }
 edge get_edge(int x, int y){
 	return peers_edges[x][y];
+}
+void iterate_longest_block_chain(block * b, vector<int> mark, int *balance){
+	while(b != NULL){
+		for(auto id:b->txn_ids){
+			txn t=get_txn(id);
+			mark[id]=1;
+			if(t.idx != -1){
+				balance[t.idx]-=t.c;
+			}
+			balance[t.idy]+=t.c;
+		}
+		b=b->parent;
+	}
+}
+vector<int> get_received_txns(int x){
+	return peers_array[x].txn_ids;
+}
+void update_root(int x, block * b){
+	peers_array[x].root = b;
 }

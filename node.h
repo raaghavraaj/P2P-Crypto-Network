@@ -18,3 +18,6 @@ bool is_connected();
 block * get_root_block(int x);
 void add_txn(int txn_id, int x);
 edge get_edge(int x, int y);
+void iterate_longest_block_chain(block * b, vector<int> mark, int *balance);
+vector<int> get_received_txns(int x);
+void update_root(int x, block * b);

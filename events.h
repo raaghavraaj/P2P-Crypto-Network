@@ -32,4 +32,7 @@ struct event
 block *create_block(block *par, int num);
 int create_txn(int x, int y, int num);
 txn get_txn(int id);
-void send_txn(int txn_id, int x, multiset<pp> &simulator, int num);
+void send_txn(int txn_id, int x, multiset<pp> &simulator, int num, double start);
+void receive_txn(int x,int txn_id);
+void get_subset_txns(block * b, int x, int num);
+void send_block(block * b, int x, multiset<pp> &simulator, int num, double start);
