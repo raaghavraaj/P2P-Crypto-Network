@@ -2,7 +2,7 @@
 using namespace std;
 struct txn
 {
-	int idx;
+	int idx; // -1 for coinbase txn
 	int idy;
 	int c;
 	int received[1000];
@@ -18,8 +18,9 @@ struct event
 {
 	int action; // 0 receive, 1 send
 	int type;	// 0 txn, 1 block
-	txn *t;
+	int idx;
 	block *b;
+	//bool operator<(const event &e1, const event &e2);
 };
 block *create_block(block *par, int num);
-txn *create_txn(int x, int num);
+int create_txn(int x, int num);
