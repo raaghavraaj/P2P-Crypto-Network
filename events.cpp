@@ -35,19 +35,19 @@ int create_txn(int x, int y, int num)
 	{
 		t.received[i] = 0;
 	}
-	t.received[x] = 1;
-	int bal = get_balance(x);
-	if (bal == 0)
-	{
-		return -1;
-	}
-	if(x == -1){
+	if(x==-1){
 		t.c = mining_fee;
 	}else{
+		t.received[x] = 1;
+		int bal = get_balance(x);
+		if (bal == 0)
+		{
+			return -1;
+		}
 		t.c = get_random_int(bal) + 1;
+		add_txn(txns.size() - 1, x);
 	}
 	txns.push_back(t);
-	add_txn(txns.size() - 1, x);
 	return txns.size() - 1;
 }
 txn get_txn(int id){

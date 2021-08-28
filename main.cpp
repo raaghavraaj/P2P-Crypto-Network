@@ -8,12 +8,13 @@ using namespace std;
 #define ll unsigned long long
 double tx = 1000;
 double mean_tk[1000];
+double z = 50;
 int main()
 {
 	while (true)
 	{
 		int num = 10;
-		init(num);
+		init(num, z);
 		for(int i = 0;i < num;i++)
 		{
 			mean_tk[i] = 5000 + 50*i;

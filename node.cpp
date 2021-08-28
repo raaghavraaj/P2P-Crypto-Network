@@ -7,7 +7,7 @@ node peers_array[max_num];
 edge peers_edges[max_num][max_num];
 int num;
 double prob_choosing_edge;
-void init(int n)
+void init(int n, double z)
 {
 	srand(time(0));
 	num = n;
@@ -16,7 +16,7 @@ void init(int n)
 	for (int i = 0; i < num; i++)
 	{
 		double random_0to1 = get_uniform_0to1();
-		peers_array[i].speed = random_0to1 < 0.5;
+		peers_array[i].speed = random_0to1 > (z / 100);
 		peers_array[i].root = genesis;
 		peers_array[i].txn_ids.clear();
 	}

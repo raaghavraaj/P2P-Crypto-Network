@@ -12,7 +12,7 @@ struct node
 	vector<int> txn_ids;
 };
 int get_balance(int x);
-void init(int n);
+void init(int n, double z);
 void create_connected_graph();
 bool is_connected();
 block * get_root_block(int x);
