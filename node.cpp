@@ -18,6 +18,7 @@ void init(int n)
 		double random_0to1 = get_uniform_0to1();
 		peers_array[i].speed = random_0to1 < 0.5;
 		peers_array[i].root = genesis;
+		peers_array[i].txn_ids.clear();
 	}
 }
 void create_connected_graph()
@@ -36,7 +37,7 @@ void create_connected_graph()
 			else
 			{
 				peers_edges[i][j].present = 1;
-				peers_edges[i][j].p = get_uniform_0to1*490+10;
+				peers_edges[i][j].p = get_uniform_0to1()*490+10;
 				if(peers_array[i].speed == 1 && peers_array[j].speed == 1)
 				{
 					peers_edges[i][j].c = 102400;
@@ -83,7 +84,8 @@ int get_balance(int x)
 	int ans=0;
 	while(b != NULL)
 	{
-		for(auto t:b->txn_ids){
+		for(auto id:b->txn_ids){
+			txn t=get_txn(id); 
 			if(t.idx == x)
 			{
 				ans-=t.c;
@@ -99,4 +101,11 @@ int get_balance(int x)
 block * get_root_block(int x)
 {
 	return peers_array[x].root;
+}
+void add_txn(int txn_id, int x)
+{
+	peers_array[x].txn_ids.push_back(txn_id);
+}
+edge get_edge(int x, int y){
+	return peers_edges[x][y];
 }

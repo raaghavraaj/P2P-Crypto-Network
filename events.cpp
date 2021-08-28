@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 #include "node.h"
 #include "utils.h"
+#define pp pair<double, event>
+#define fi first
+#define se second
 using namespace std;
 int mining_fee = 50;
 vector<txn> txns;
@@ -40,5 +43,20 @@ int create_txn(int x, int y, int num)
 	}
 	t.c = get_random_int(bal) + 1;
 	txns.push_back(t);
+	add_txn(txns.size() - 1, x);
 	return txns.size() - 1;
+}
+txn get_txn(int id){
+	return txns[id];
+}
+void send_txn(int txn_id, int x, multiset<pp> &simulator, int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+		edge e = get_edge(x, i);
+		if(e.present && txns[txn_id].received[i] == 0 && i!=x){
+			double d_mean = 96/e.c;
+			double d = 
+		}
+	}
 }

@@ -1,4 +1,7 @@
 #include <bits/stdc++.h>
+#define pp pair<double, event>
+#define fi first
+#define se second
 using namespace std;
 struct txn
 {
@@ -20,10 +23,13 @@ struct event
 	int type;	// 0 txn, 1 block
 	int idx;
 	block *b;
-	bool operator<(const event &e2) const
+	int txn_id;
+	bool operator<(const event &e) const
 	{
-		return std::tie(idx) < std::tie(e2.idx);
+		return std::tie(idx) < std::tie(e.idx);
 	}
 };
 block *create_block(block *par, int num);
-int create_txn(int x, int num);
+int create_txn(int x, int y, int num);
+txn get_txn(int id);
+void send_txn(int txn_id, int x, multiset<pp> &simulator, int num);
