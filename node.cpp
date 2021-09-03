@@ -12,7 +12,7 @@ void init_node(int n, double z)
 	srand(time(0));
 	num = n;
 	prob_choosing_edge = 3 * log(num) / num;
-	int genesis_id = create_block(-1,-1);
+	int genesis_id = create_block(-1, -1);
 	for (int i = 0; i < num; i++)
 	{
 		receive_block(i, genesis_id);
@@ -39,11 +39,13 @@ void create_connected_graph()
 			else
 			{
 				peers_edges[i][j].present = 1;
-				peers_edges[i][j].p = get_uniform_0to1()*490+10;
-				if(peers_array[i].speed == 1 && peers_array[j].speed == 1)
+				peers_edges[i][j].p = get_uniform_0to1() * 490 + 10;
+				if (peers_array[i].speed == 1 && peers_array[j].speed == 1)
 				{
 					peers_edges[i][j].c = 102.4;
-				}else{
+				}
+				else
+				{
 					peers_edges[i][j].c = 5.12;
 				}
 				peers_edges[j][i] = peers_edges[i][j];
@@ -80,37 +82,49 @@ bool is_connected()
 	}
 	return true;
 }
-int get_root_block_id(int x){
+int get_root_block_id(int x)
+{
 	return peers_array[x].root_id;
 }
-void update_root_block_id(int x, int block_id){
-	peers_array[x].root_id = block_id;	
+void update_root_block_id(int x, int block_id)
+{
+	peers_array[x].root_id = block_id;
 }
-vector<int> get_peer_txn_ids(int x){
+vector<int> get_peer_txn_ids(int x)
+{
 	return peers_array[x].txn_ids;
 }
-void receive_txn(int x, int txn_id){
+void receive_txn(int x, int txn_id)
+{
 	peers_array[x].txn_ids.push_back(txn_id);
 }
-bool is_txn_received(int x,int txn_id){
-	for(auto tid : peers_array[x].txn_ids){
-		if(tid == txn_id){
+bool is_txn_received(int x, int txn_id)
+{
+	for (auto tid : peers_array[x].txn_ids)
+	{
+		if (tid == txn_id)
+		{
 			return true;
 		}
 	}
 	return false;
 }
-void receive_block(int x, int block_id){
-	peers_array[x].block_ids.push_back(block_id);	
+void receive_block(int x, int block_id)
+{
+	peers_array[x].block_ids.push_back(block_id);
 }
-bool is_block_received(int x,int block_id){
-	for(auto bid : peers_array[x].block_ids){
-		if(bid == block_id){
+bool is_block_received(int x, int block_id)
+{
+	for (auto bid : peers_array[x].block_ids)
+	{
+		if (bid == block_id)
+		{
 			return true;
 		}
 	}
 	return false;
 }
-edge get_edge(int x,int y){
+edge get_edge(int x, int y)
+{
 	return peers_edges[x][y];
 }
