@@ -34,4 +34,7 @@ event create_send_txn_event(int x);
 event create_send_block_event(int x);
 void send_txn(int txn_id,int x,multiset<pp> &simulator,double start_time,int par_node_id);
 void add_txns_to_block(int x,int block_id);
-void send_block(int block_id,int x,multiset<pp> &simulator,double start_time,int par_node_id);
+void send_block(int block_id,int x,multiset<pp> &simulator,double start_time,int par_node_id,int mean_tk);
+void print_tree();
+int total_blocks_of_peer(int x);
+int blocks_of_peer_in_chain(int x,int root_id);

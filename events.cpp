@@ -113,6 +113,9 @@ void add_txns_to_block(int x,int block_id){
 	balance[x] += mining_fee;
 	blocks[block_id].txn_ids.push_back(coinbase_txn_id);
 	for(auto tid:peer_txn_ids){
+		if(blocks[block_id].txn_ids.size() == 1000){
+			break;
+		}
 		if(!txn_seen[tid] && balance[txns[tid].idx]>=txns[tid].c){
 			balance[txns[tid].idx] -= txns[tid].c;
 			balance[txns[tid].idy] -= txns[tid].c;
@@ -120,11 +123,13 @@ void add_txns_to_block(int x,int block_id){
 		}
 	}
 }
-void send_block(int block_id,int x,multiset<pp> &simulator,double start_time,int par_node_id){
+void send_block(int block_id,int x,multiset<pp> &simulator,double start_time,int par_node_id,int mean_tk){
 	receive_block(x, block_id);
 	int root_id = get_root_block_id(x);
 	if(blocks[block_id].chain_length > blocks[root_id].chain_length){
 		update_root_block_id(x, block_id);
+		event e = create_send_block_event(x);
+		simulator.insert({get_expo_dist(mean_tk) + start_time, e});
 	}
 	for(int i=0;i<num2;i++){
 		if(i == par_node_id || i == x){
@@ -140,4 +145,28 @@ void send_block(int block_id,int x,multiset<pp> &simulator,double start_time,int
 			simulator.insert({time_receive + start_time, et});
 		}
 	}	
+}
+void print_tree(){
+	for(auto b:blocks){
+		cout<<b.id<<" "<<b.parent_id<<endl;
+	}
+}
+int total_blocks_of_peer(int x){
+	int cnt=0;
+	for(auto b:blocks){
+		if(b.idx == x){
+			cnt++;
+		}
+	}
+	return cnt;
+}
+int blocks_of_peer_in_chain(int x,int root_id){
+	int cnt=0;
+	while(root_id != -1){
+		if(blocks[root_id].idx == x){
+			cnt++;
+		}
+		root_id = blocks[root_id].parent_id;
+	}
+	return cnt;
 }
