@@ -7,18 +7,20 @@ node peers_array[max_num];
 edge peers_edges[max_num][max_num];
 int num;
 double prob_choosing_edge;
-void init(int n, double z)
+void init_node(int n, double z)
 {
 	srand(time(0));
 	num = n;
 	prob_choosing_edge = 3 * log(num) / num;
-	block *genesis = create_block(NULL, num);
+	int genesis_id = create_block(-1,-1);
 	for (int i = 0; i < num; i++)
 	{
+		receive_block(i, genesis_id);
 		double random_0to1 = get_uniform_0to1();
 		peers_array[i].speed = random_0to1 > (z / 100);
-		peers_array[i].root = genesis;
+		peers_array[i].root_id = genesis_id;
 		peers_array[i].txn_ids.clear();
+		peers_array[i].block_ids.clear();
 	}
 }
 void create_connected_graph()
@@ -78,53 +80,37 @@ bool is_connected()
 	}
 	return true;
 }
-int get_balance(int x)
-{
-	block * b=peers_array[x].root;
-	int ans=0;
-	while(b != NULL)
-	{
-		for(auto id:b->txn_ids){
-			txn t=get_txn(id); 
-			if(t.idx == x)
-			{
-				ans-=t.c;
-			}else if(t.idy == x)
-			{
-				ans+=t.c;
-			}
-		}
-		b = b->parent;
-	}
-	return ans;
+int get_root_block_id(int x){
+	return peers_array[x].root_id;
 }
-block * get_root_block(int x)
-{
-	return peers_array[x].root;
+void update_root_block_id(int x, int block_id){
+	peers_array[x].root_id = block_id;	
 }
-void add_txn(int txn_id, int x)
-{
-	peers_array[x].txn_ids.push_back(txn_id);
-}
-edge get_edge(int x, int y){
-	return peers_edges[x][y];
-}
-void iterate_longest_block_chain(block * b, vector<int> mark, int *balance){
-	while(b != NULL){
-		for(auto id:b->txn_ids){
-			txn t=get_txn(id);
-			mark[id]=1;
-			if(t.idx != -1){
-				balance[t.idx]-=t.c;
-			}
-			balance[t.idy]+=t.c;
-		}
-		b=b->parent;
-	}
-}
-vector<int> get_received_txns(int x){
+vector<int> get_peer_txn_ids(int x){
 	return peers_array[x].txn_ids;
 }
-void update_root(int x, block * b){
-	peers_array[x].root = b;
+void receive_txn(int x, int txn_id){
+	peers_array[x].txn_ids.push_back(txn_id);
+}
+bool is_txn_received(int x,int txn_id){
+	for(auto tid : peers_array[x].txn_ids){
+		if(tid == txn_id){
+			return true;
+		}
+	}
+	return false;
+}
+void receive_block(int x, int block_id){
+	peers_array[x].block_ids.push_back(block_id);	
+}
+bool is_block_received(int x,int block_id){
+	for(auto bid : peers_array[x].block_ids){
+		if(bid == block_id){
+			return true;
+		}
+	}
+	return false;
+}
+edge get_edge(int x,int y){
+	return peers_edges[x][y];
 }

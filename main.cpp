@@ -14,100 +14,62 @@ int main()
 	while (true)
 	{
 		int num = 10;
-		init(num, z);
-		for(int i = 0;i < num;i++)
-		{
+		for(int i=0;i<num;i++){
 			mean_tk[i] = 5000 + 50*i;
 		}
-		while (true)
-		{
+		init_event(num);
+		init_node(num, z);
+		while(true){
 			create_connected_graph();
-			if (is_connected())
-			{
+			if (is_connected()){
 				break;
 			}
 		}
 		multiset<pp> simulator;
 		for (int i = 0; i < num; i++)
 		{
-			event e;
-			e.action = 1;
-			e.type = 0;
-			e.idx = i;
+			event e = create_send_txn_event(i);
 			simulator.insert({get_expo_dist(tx), e});
-		}
-		for (int i = 0; i < num; i++)
-		{
-			event e;
-			e.action = 1;
-			e.type = 1;
-			e.idx = i;
-			e.b = get_root_block(i);
+			e = create_send_block_event(i);
 			simulator.insert({get_expo_dist(mean_tk[i]), e});
 		}
 		ll start = get_time_in_ms();
-		while (!simulator.empty())
-		{
+		while (!simulator.empty()){
 			pp top = (*simulator.begin());
 			simulator.erase(simulator.find(top));
-			double event_time = top.fi;
-			event e = top.se;
-			while(get_time_in_ms()-start < event_time){
+			double evt_time = top.fi;
+			event evt = top.se;
+			while(get_time_in_ms()-start < evt_time){
 			}
-			cout<<event_time<<" "<<e.type<<" "<<e.action<<" "<<e.idx<<endl;
-			if(e.type == 0)
-			{
-				if(e.action == 1)
-				{
-					int x = e.idx;
+			cout<<evt_time<<" "<<evt.type<<" "<<evt.idx<<" "<<evt.parent_node_id<<endl;
+			if(evt.type == 0){
+				if(evt.parent_node_id == -1){
 					int y = get_random_int(num-1);
-					if(y >= x){
+					if(y >= evt.idx){
 						y++;
 					}
-					event et;
-					et.action = 1;
-					et.type = 0;
-					et.idx = x;
-					simulator.insert({get_expo_dist(tx) + event_time, et});
-					int txn_id = create_txn(x, y, num);
-					if(txn_id == -1){
-						continue;
-					}
-					send_txn(txn_id, x, simulator, num, event_time);
+					int txn_id = create_txn(evt.idx, y);
+					event e = create_send_txn_event(evt.idx);
+					simulator.insert({get_expo_dist(tx) + evt_time, e});
+					send_txn(txn_id,evt.idx,simulator,evt_time,evt.parent_node_id);
 				}else{
-					int x = e.idx;
-					int txn_id = e.txn_id;
-					receive_txn(x, txn_id);
-					send_txn(txn_id, x, simulator, num, event_time);
+					if(!is_txn_received(evt.idx,evt.txn_id)){
+						send_txn(evt.txn_id,evt.idx,simulator,evt_time,evt.parent_node_id);	
+					}
 				}
 			}else{
-				if(e.action == 1)
-				{
-					int x = e.idx;
-					event et;
-					et.action = 1;
-					et.type = 1;
-					et.idx = x;
-					et.b = get_root_block(x);
-					simulator.insert({get_expo_dist(mean_tk[x]) + event_time, et});
-					if(e.b == get_root_block(x))
-					{
-						block * new_block = create_block(e.b, num);
-						new_block->received[x] = 1;
-						update_root(x, new_block);
-						get_subset_txns(new_block, x, num);
-						int txn_id = create_txn(-1, x, num);
-						new_block->txn_ids.push_back(txn_id);
-						send_block(new_block, x, simulator, num, event_time);
+				if(evt.parent_node_id == -1){
+					event e = create_send_block_event(evt.idx);
+					simulator.insert({get_expo_dist(mean_tk[evt.idx]) + evt_time, e});
+					if(evt.block_id == get_root_block_id(evt.idx)){
+						int block_id = create_block(evt.idx,evt.block_id);
+						add_txns_to_block(evt.idx,block_id);
+						send_block(block_id,evt.idx,simulator,evt_time,evt.parent_node_id);
 					}
 				}else{
-					int x = e.idx;
-					e.b->received[x] = 1;
-					block * r = get_root_block(x);
-					if(r->chain_length < e.b->chain_length){
-						update_root(x, e.b);
-					}
-					send_block(e.b, x, simulator, num, event_time);
+					if(!is_block_received(evt.idx,evt.block_id)){
+						send_block(evt.block_id,evt.idx,simulator,evt_time,evt.parent_node_id);	
+					}	
 				}
 			}
 		}

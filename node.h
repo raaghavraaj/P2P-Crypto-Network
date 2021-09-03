@@ -1,23 +1,23 @@
 #include "events.h"
-struct edge
-{
+struct edge{
 	int present; // 0 DNE, 1 exist
 	double p;
 	double c;
 };
-struct node
-{
+struct node{
 	int speed; // 0 slow, 1 fast
-	block *root;
-	vector<int> txn_ids;
+	int root_id; // root block id
+	vector<int> txn_ids; // txn ids received
+	vector<int> block_ids; // block ids received
 };
-int get_balance(int x);
-void init(int n, double z);
+void init_node(int n, double z);
 void create_connected_graph();
 bool is_connected();
-block * get_root_block(int x);
-void add_txn(int txn_id, int x);
-edge get_edge(int x, int y);
-void iterate_longest_block_chain(block * b, vector<int> mark, int *balance);
-vector<int> get_received_txns(int x);
-void update_root(int x, block * b);
+int get_root_block_id(int x);
+void update_root_block_id(int x, int block_id);
+void receive_txn(int x, int txn_id);
+bool is_txn_received(int x,int txn_id);
+void receive_block(int x, int block_id);
+bool is_block_received(int x,int block_id);
+edge get_edge(int x,int y);
+vector<int> get_peer_txn_ids(int x);
