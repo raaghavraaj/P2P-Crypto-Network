@@ -11,4 +11,4 @@ utils.o: utils.cpp
 events.o: events.cpp
 	$(CC) $(CFLAGS) -c events.cpp
 clean:
-	rm -f *.o output
+	rm -f *.o output *.txt
